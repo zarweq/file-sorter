@@ -3,9 +3,28 @@
     "version": "1.0.0",
     "main": "main.js",
     "scripts": {
-        "start": "electron ."
+        "start": "electron .",
+        "dist": "electron-builder"
     },
     "devDependencies": {
-        "electron": "^44.7.0"
+        "electron": "^44.7.0",
+        "electron-builder": "^26.15.3"
+    },
+    "build": {
+        "appId": "com.sergei.filesorter",
+        "productName": "File Sorter",
+        "files": [
+            "main.js",
+            "preload.js",
+            "renderer.js",
+            "sorter.js",
+            "index.html",
+            "style.css",
+            "rules.json"
+
+        ],
+        "mac": {
+            "target": "dmg"
+        }
     }
 }
