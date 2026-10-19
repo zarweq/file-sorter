@@ -11,9 +11,8 @@ function loadRules() {
 }
 
 
-function getCategory(extension) {
-    const categories = loadRules()
-    return categories[extension] || 'Other'
+function getCategory(extension, rules) {
+    return rules[extension] || 'Other'
 }
 
 
@@ -47,14 +46,15 @@ function moveFile(srcPath, destFolder) {
 function sortFolder(folderPath) {
     const log = []
     lastMoves = []
+    const rules = loadRules()
     const files = fs.readdirSync(folderPath)
     for (const filename of files) {
         const fullPath = path.join(folderPath, filename)
-        if (!fs.statSync(fullPath).isFile()) {
+        if (!fs.statSync(fullPath).isFile() || filename.startsWith('.')) {
             continue
         }
         const extension = getExtension(filename)
-        const category = getCategory(extension)
+        const category = getCategory(extension, rules)
         const destFolder = path.join(folderPath, category)
         ensureFolder(destFolder)
         const move = moveFile(fullPath, destFolder)
