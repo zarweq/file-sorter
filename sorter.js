@@ -98,4 +98,4 @@ function undoLastSort() {
 
 
 
-module.exports = { sortFolder, undoLastSort }
+module.exports = { sortFolder, undoLastSort, getExtension, getCategory }
