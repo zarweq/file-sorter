@@ -52,3 +52,31 @@ button:hover {
     font-family: monospace;
     background-color: #2a2a2c;
 }
+
+
+#tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    background-color: #2a2a2c;
+}
+
+.tab-btn.active {
+    background-color: darkblue;
+}
+
+.tab-page {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+.hidden {
+    display: none;
+}

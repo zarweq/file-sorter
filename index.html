@@ -7,15 +7,31 @@
 </head>
 <body>
     <h1>File Sorter</h1>
-    <button id="choose-folder-btn">Выбрать папку</button>
-    <p id="selected-path">Папка не выбрана</p>
-    <button id="sort-btn">Сортировать</button>
-    <button id="undo-btn">Отменить</button>
-    <ul id="log"></ul>
-    <h2>Правила сортировки</h2>
-    <div id="rules-container"></div>
-    <button id="add-rule-btn">Добавить правило</button>
-    <button id="save-rules-btn">Сохранить правила</button>
-<script src="renderer.js"></script>  
+
+    <div id="tabs">
+        <button id="tab-btn-sort" class="tab-btn">Сортировка</button>
+        <button id="tab-btn-log" class="tab-btn">Лог</button>
+        <button id="tab-btn-rules" class="tab-btn">Правила</button>
+    </div>
+
+    <div id="tab-sort" class="tab-page">
+        <button id="choose-folder-btn">Выбрать папку</button>
+        <p id="selected-path">Папка не выбрана</p>
+        <button id="sort-btn">Сортировать</button>
+        <button id="undo-btn">Отменить</button>
+    </div>
+
+    <div id="tab-log" class="tab-page hidden">
+        <ul id="log"></ul>
+    </div>
+
+    <div id="tab-rules" class="tab-page hidden">
+        <h2>Правила сортировки</h2>
+        <div id="rules-container"></div>
+        <button id="add-rule-btn">Добавить правило</button>
+        <button id="save-rules-btn">Сохранить правила</button>
+    </div>
+
+    <script src="renderer.js"></script>
 </body>
-    </html>
+</html>

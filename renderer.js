@@ -6,6 +6,14 @@ const undoBtn = document.getElementById('undo-btn')
 const rulesContainer = document.getElementById('rules-container')
 const addRuleBtn = document.getElementById('add-rule-btn')
 const saveRulesBtn = document.getElementById('save-rules-btn')
+const tabBtnSort = document.getElementById('tab-btn-sort')
+const tabBtnLog = document.getElementById('tab-btn-log')
+const tabBtnRules = document.getElementById('tab-btn-rules')
+
+const tabSort = document.getElementById('tab-sort')
+const tabLog = document.getElementById('tab-log')
+const tabRules = document.getElementById('tab-rules')
+
 chooseFolderBtn.addEventListener('click', async() => {
     const folder = await window.api.chooseFolder()
     if (folder) {
@@ -60,6 +68,25 @@ undoBtn.addEventListener('click', async() => {
     }
 
 })
+
+
+function showTab(page, button) {
+    tabSort.classList.add('hidden')
+    tabLog.classList.add('hidden')
+    tabRules.classList.add('hidden')
+    tabBtnSort.classList.remove('active')
+    tabBtnLog.classList.remove('active')
+    tabBtnRules.classList.remove('active')
+
+    page.classList.remove('hidden')
+    button.classList.add('active')
+}
+
+tabBtnSort.addEventListener('click', () => showTab(tabSort, tabBtnSort))
+tabBtnLog.addEventListener('click', () => showTab(tabLog, tabBtnLog))
+tabBtnRules.addEventListener('click', () => showTab(tabRules, tabBtnRules))
+
+showTab(tabSort, tabBtnSort)
 
 loadRules()
 addRuleBtn.addEventListener('click', () => {
