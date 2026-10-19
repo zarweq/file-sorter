@@ -1,8 +1,22 @@
-const {app, BrowserWindow, ipcMain, dialog} = require('electron')
+const { app, BrowserWindow, ipcMain, dialog } = require('electron')
 const path = require('path')
-const { sortFolder, undoLastSort } = require('./sorter.js')
-const rulesPath = path.join(__dirname, 'rules.json')
 const fs = require('fs')
+const { sortFolder, undoLastSort } = require('./sorter.js')
+
+let rulesPath
+let historyPath
+
+function initDataFiles() {
+    const userDataDir = app.getPath('userData')
+    rulesPath = path.join(userDataDir, 'rules.json')
+    historyPath = path.join(userDataDir, 'history.json')
+
+    if (!fs.existsSync(rulesPath)) {
+        const defaultRulesPath = path.join(__dirname, 'rules.json')
+        fs.copyFileSync(defaultRulesPath, rulesPath)
+    }
+}
+
 function createWindow() {
     const win = new BrowserWindow({
         width: 1280,
@@ -13,7 +27,7 @@ function createWindow() {
     })
     win.loadFile('index.html')
 }
-ipcMain.handle('dialog:openFolder', async() => {
+ipcMain.handle('dialog:openFolder', async () => {
     const result = await dialog.showOpenDialog({
         properties: ['openDirectory']
     })
@@ -22,19 +36,19 @@ ipcMain.handle('dialog:openFolder', async() => {
     }
     return result.filePaths[0]
 })
-ipcMain.handle('sorter:run', async(event,folderPath) => {
-    try{
-        const sort = sortFolder(folderPath)
+ipcMain.handle('sorter:run', async (event, folderPath) => {
+    try {
+        const sort = sortFolder(folderPath, rulesPath, historyPath)
         return sort
     } catch (error) {
         return [`Error: ${error.message}`]
-    }  
+    }
 })
-ipcMain.handle('sorter:undo', async() => {
-    try{
-        const log = undoLastSort()
+ipcMain.handle('sorter:undo', async () => {
+    try {
+        const log = undoLastSort(historyPath)
         return log
-    } catch(error) {
+    } catch (error) {
         return [`Error: ${error.message}`]
     }
 })
@@ -43,7 +57,7 @@ ipcMain.handle('rules:get', async () => {
         const data = fs.readFileSync(rulesPath, 'utf-8')
         return JSON.parse(data)
     } catch (error) {
-        return{}
+        return {}
     }
 })
 ipcMain.handle('rules:save', async (event, rules) => {
@@ -56,5 +70,6 @@ ipcMain.handle('rules:save', async (event, rules) => {
 })
 
 app.whenReady().then(() => {
+    initDataFiles()
     createWindow()
 })

@@ -1,15 +1,16 @@
 const path = require('path')
 const fs = require('fs')
-const historyPath = path.join(__dirname, 'history.json')
-const rulesPath = path.join(__dirname, 'rules.json')
+
 function getExtension(filename) {
     return path.extname(filename).slice(1)
 }
-function loadRules() {
+
+function loadRules(rulesPath) {
     const data = fs.readFileSync(rulesPath, 'utf-8')
     return JSON.parse(data)
 }
-function loadHistory() {
+
+function loadHistory(historyPath) {
     if (!fs.existsSync(historyPath)) {
         return []
     }
@@ -17,21 +18,17 @@ function loadHistory() {
     return JSON.parse(data)
 }
 
-function saveHistory(moves) {
+function saveHistory(historyPath, moves) {
     fs.writeFileSync(historyPath, JSON.stringify(moves, null, 4))
 }
-
-
 
 function getCategory(extension, rules) {
     return rules[extension] || 'Other'
 }
 
-
 function ensureFolder(folderPath) {
-    fs.mkdirSync(folderPath, {recursive: true })
+    fs.mkdirSync(folderPath, { recursive: true })
 }
-
 
 function getAvailablePath(destFolder, filename) {
     const parsed = path.parse(filename)
@@ -45,7 +42,6 @@ function getAvailablePath(destFolder, filename) {
     return newPath
 }
 
-
 function moveFile(srcPath, destFolder) {
     const filename = path.basename(srcPath)
     const newPath = getAvailablePath(destFolder, filename)
@@ -53,12 +49,10 @@ function moveFile(srcPath, destFolder) {
     return { from: srcPath, to: newPath, message: `Moved ${filename} -> ${destFolder}` }
 }
 
-
-
-function sortFolder(folderPath) {
+function sortFolder(folderPath, rulesPath, historyPath) {
     const log = []
     const moves = []
-    const rules = loadRules()
+    const rules = loadRules(rulesPath)
     const files = fs.readdirSync(folderPath)
     for (const filename of files) {
         try {
@@ -77,25 +71,26 @@ function sortFolder(folderPath) {
             log.push(`Error: ${filename} - ${error.message}`)
         }
     }
-    saveHistory(moves)
+    if (moves.length > 0) {
+        saveHistory(historyPath, moves)
+    }
     return log
 }
 
-
-
-
-function undoLastSort() {
+function undoLastSort(historyPath) {
     const log = []
-    const moves = loadHistory()
+    const moves = loadHistory(historyPath)
     for (let i = moves.length - 1; i >= 0; i--) {
         const move = moves[i]
-        fs.renameSync(move.to, move.from)
-        log.push(`Undo: ${move.to} -> ${move.from}`)
+        try {
+            fs.renameSync(move.to, move.from)
+            log.push(`Undo: ${move.to} -> ${move.from}`)
+        } catch (error) {
+            log.push(`Error: ${move.to} - ${error.message}`)
+        }
     }
-    saveHistory([])
+    saveHistory(historyPath, [])
     return log
 }
-
-
 
 module.exports = { sortFolder, undoLastSort, getExtension, getCategory }
