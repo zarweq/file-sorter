@@ -49,7 +49,8 @@ function sortFolder(folderPath) {
     const rules = loadRules()
     const files = fs.readdirSync(folderPath)
     for (const filename of files) {
-        const fullPath = path.join(folderPath, filename)
+        try {
+            const fullPath = path.join(folderPath, filename)
         if (!fs.statSync(fullPath).isFile() || filename.startsWith('.')) {
             continue
         }
@@ -60,6 +61,9 @@ function sortFolder(folderPath) {
         const move = moveFile(fullPath, destFolder)
         lastMoves.push({ from: move.from, to: move.to })
         log.push(move.message)
+        } catch (error) {
+            log.push(`Error: ${filename} - ${error.message}`)
+        }
     }
     return log
 }

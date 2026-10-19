@@ -23,21 +23,38 @@ ipcMain.handle('dialog:openFolder', async() => {
     return result.filePaths[0]
 })
 ipcMain.handle('sorter:run', async(event,folderPath) => {
-    const sort = sortFolder(folderPath)
-    return sort 
+    try{
+        const sort = sortFolder(folderPath)
+        return sort
+    } catch (error) {
+        return [`Error: ${error.message}`]
+    }  
 })
 ipcMain.handle('sorter:undo', async() => {
-    const log = undoLastSort()
-    return log
+    try{
+        const log = undoLastSort()
+        return log
+    } catch(error) {
+        return [`Error: ${error.message}`]
+    }
 })
 ipcMain.handle('rules:get', async () => {
-    const data = fs.readFileSync(rulesPath, 'utf-8')
-    return JSON.parse(data)
+    try {
+        const data = fs.readFileSync(rulesPath, 'utf-8')
+        return JSON.parse(data)
+    } catch (error) {
+        return{}
+    }
 })
 ipcMain.handle('rules:save', async (event, rules) => {
-    fs.writeFileSync(rulesPath, JSON.stringify(rules,null, 4))
-    return true
+    try {
+        fs.writeFileSync(rulesPath, JSON.stringify(rules, null, 4))
+        return true
+    } catch (error) {
+        return false
+    }
 })
+
 app.whenReady().then(() => {
     createWindow()
 })
